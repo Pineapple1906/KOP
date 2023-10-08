@@ -112,30 +112,14 @@
             var curNode = treeView1.SelectedNode;
             if (curNode.Nodes.Count > 0)
                 throw new Exception("Choose last node of tree (leaf)");
-            var Vals = new List<string>();
-            while (curNode != null)
-            {
-                Vals.Add(curNode.Text);
-                curNode = curNode.Parent;
-            }
-            Vals.Reverse();
             var item = new T();
-            var count = item.GetType().GetProperties().Length;
-            for (int i = 0; i < config.Count; ++i)
+            for (int i = config.Count - 1; i >= 0; i--)
             {
-                if (i < count)
+                var pinfo = item.GetType().GetProperty(config[i]);
+                if (pinfo != null)
                 {
-                    var pinfo = item.GetType().GetProperty(config[i]);
-                    if (pinfo != null)
-                        pinfo.SetValue(item, Convert.ChangeType(Vals[i], pinfo.PropertyType));
-                }
-                else
-                {
-                    var finfo = item.GetType().GetField(config[i]);
-                    if (finfo != null)
-                    {
-                        finfo.SetValue(item, Convert.ChangeType(Vals[i], finfo.FieldType));
-                    }
+                    pinfo.SetValue(item, Convert.ChangeType(curNode.Text, pinfo.PropertyType));
+                    curNode = curNode.Parent;
                 }
             }
             return item;

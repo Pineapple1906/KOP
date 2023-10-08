@@ -50,7 +50,14 @@ namespace WinFormsLibrary1
             }
             set
             {
-                checkedListBox1.SelectedItem = value;
+                if (checkedListBox1.SelectedItems.Contains(value))
+                {
+                    checkedListBox1.SelectedItem = value;
+                }
+                else
+                {
+                    checkedListBox1.SelectedIndex = -1;
+                }
             }
         }
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)

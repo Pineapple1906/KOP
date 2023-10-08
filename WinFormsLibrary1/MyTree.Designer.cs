@@ -34,18 +34,18 @@
             // treeView1
             // 
             treeView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            treeView1.Location = new Point(-1, 3);
+            treeView1.Location = new System.Drawing.Point(-1, 3);
             treeView1.Name = "treeView1";
-            treeView1.Size = new Size(151, 121);
+            treeView1.Size = new System.Drawing.Size(151, 121);
             treeView1.TabIndex = 0;
             // 
             // MyTree
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(treeView1);
             Name = "MyTree";
-            Size = new Size(150, 126);
+            Size = new System.Drawing.Size(150, 126);
             ResumeLayout(false);
         }
 

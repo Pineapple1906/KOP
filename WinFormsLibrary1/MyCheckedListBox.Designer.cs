@@ -35,15 +35,15 @@
             // 
             checkedListBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new Point(-3, 0);
+            checkedListBox1.Location = new System.Drawing.Point(-3, 0);
             checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(150, 136);
+            checkedListBox1.Size = new System.Drawing.Size(150, 136);
             checkedListBox1.TabIndex = 0;
             checkedListBox1.SelectedIndexChanged += checkedListBox1_SelectedIndexChanged;
             // 
             // MyCheckedListBox
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(checkedListBox1);
             Name = "MyCheckedListBox";
