@@ -28,93 +28,102 @@
         /// </summary>
         private void InitializeComponent()
         {
-            myCheckedListBox1 = new WinFormsLibrary1.MyCheckedListBox();
-            myTextBox1 = new WinFormsLibrary1.MyTextBox();
-            myTree1 = new WinFormsLibrary1.MyTree();
-            buttonInsert = new Button();
-            buttonDelete = new Button();
-            buttonSelected = new Button();
-            label1 = new Label();
+            buttonInsert=new Button();
+            buttonDelete=new Button();
+            buttonSelected=new Button();
+            label1=new Label();
+            buttonImage=new Button();
+            buttonTable=new Button();
+            buttonChart=new Button();
             SuspendLayout();
-            // 
-            // myCheckedListBox1
-            // 
-            myCheckedListBox1.Location = new Point(12, 12);
-            myCheckedListBox1.Name = "myCheckedListBox1";
-            myCheckedListBox1.SelectedElement = "";
-            myCheckedListBox1.Size = new Size(208, 187);
-            myCheckedListBox1.TabIndex = 0;
-            // 
-            // myTextBox1
-            // 
-            myTextBox1.EndRange = 100;
-            myTextBox1.Location = new Point(12, 196);
-            myTextBox1.Name = "myTextBox1";
-            myTextBox1.Size = new Size(208, 40);
-            myTextBox1.StartRange = 3;
-            myTextBox1.TabIndex = 1;
-            // 
-            // myTree1
-            // 
-            myTree1.Location = new Point(308, 12);
-            myTree1.Name = "myTree1";
-            myTree1.SelectedIndex = -1;
-            myTree1.Size = new Size(188, 158);
-            myTree1.TabIndex = 2;
             // 
             // buttonInsert
             // 
-            buttonInsert.Location = new Point(12, 242);
-            buttonInsert.Name = "buttonInsert";
-            buttonInsert.Size = new Size(94, 29);
-            buttonInsert.TabIndex = 3;
-            buttonInsert.Text = "Добавить";
-            buttonInsert.UseVisualStyleBackColor = true;
-            buttonInsert.Click += buttonInsert_Click;
+            buttonInsert.Location=new Point(10, 182);
+            buttonInsert.Margin=new Padding(3, 2, 3, 2);
+            buttonInsert.Name="buttonInsert";
+            buttonInsert.Size=new Size(82, 22);
+            buttonInsert.TabIndex=3;
+            buttonInsert.Text="Добавить";
+            buttonInsert.UseVisualStyleBackColor=true;
+            buttonInsert.Click+=buttonInsert_Click;
             // 
             // buttonDelete
             // 
-            buttonDelete.Location = new Point(12, 277);
-            buttonDelete.Name = "buttonDelete";
-            buttonDelete.Size = new Size(94, 29);
-            buttonDelete.TabIndex = 4;
-            buttonDelete.Text = "Удалить";
-            buttonDelete.UseVisualStyleBackColor = true;
-            buttonDelete.Click += buttonDelete_Click;
+            buttonDelete.Location=new Point(10, 208);
+            buttonDelete.Margin=new Padding(3, 2, 3, 2);
+            buttonDelete.Name="buttonDelete";
+            buttonDelete.Size=new Size(82, 22);
+            buttonDelete.TabIndex=4;
+            buttonDelete.Text="Удалить";
+            buttonDelete.UseVisualStyleBackColor=true;
+            buttonDelete.Click+=buttonDelete_Click;
             // 
             // buttonSelected
             // 
-            buttonSelected.Location = new Point(126, 242);
-            buttonSelected.Name = "buttonSelected";
-            buttonSelected.Size = new Size(94, 29);
-            buttonSelected.TabIndex = 5;
-            buttonSelected.Text = "Сохранить данные";
-            buttonSelected.UseVisualStyleBackColor = true;
-            buttonSelected.Click += buttonSelected_Click;
+            buttonSelected.Location=new Point(110, 182);
+            buttonSelected.Margin=new Padding(3, 2, 3, 2);
+            buttonSelected.Name="buttonSelected";
+            buttonSelected.Size=new Size(82, 22);
+            buttonSelected.TabIndex=5;
+            buttonSelected.Text="Сохранить данные";
+            buttonSelected.UseVisualStyleBackColor=true;
+            buttonSelected.Click+=buttonSelected_Click;
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(126, 281);
-            label1.Name = "label1";
-            label1.Size = new Size(50, 20);
-            label1.TabIndex = 6;
-            label1.Text = "label1";
+            label1.AutoSize=true;
+            label1.Location=new Point(110, 211);
+            label1.Name="label1";
+            label1.Size=new Size(38, 15);
+            label1.TabIndex=6;
+            label1.Text="label1";
+            // 
+            // buttonImage
+            // 
+            buttonImage.Location=new Point(12, 303);
+            buttonImage.Name="buttonImage";
+            buttonImage.Size=new Size(136, 23);
+            buttonImage.TabIndex=7;
+            buttonImage.Text="Пдф с изображением";
+            buttonImage.UseVisualStyleBackColor=true;
+            buttonImage.Click+=buttonImage_Click;
+            // 
+            // buttonTable
+            // 
+            buttonTable.Location=new Point(154, 303);
+            buttonTable.Name="buttonTable";
+            buttonTable.Size=new Size(140, 23);
+            buttonTable.TabIndex=8;
+            buttonTable.Text="Пдф с таблицей";
+            buttonTable.UseVisualStyleBackColor=true;
+            buttonTable.Click+=buttonTable_Click;
+            // 
+            // buttonChart
+            // 
+            buttonChart.Location=new Point(300, 303);
+            buttonChart.Name="buttonChart";
+            buttonChart.Size=new Size(165, 23);
+            buttonChart.TabIndex=9;
+            buttonChart.Text="Пдф с диаграммой";
+            buttonChart.UseVisualStyleBackColor=true;
+            buttonChart.Click+=buttonChart_Click;
             // 
             // FormTest
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            AutoScaleDimensions=new SizeF(7F, 15F);
+            AutoScaleMode=AutoScaleMode.Font;
+            ClientSize=new Size(700, 338);
+            Controls.Add(buttonChart);
+            Controls.Add(buttonTable);
+            Controls.Add(buttonImage);
             Controls.Add(label1);
             Controls.Add(buttonSelected);
             Controls.Add(buttonDelete);
             Controls.Add(buttonInsert);
-            Controls.Add(myTree1);
-            Controls.Add(myTextBox1);
-            Controls.Add(myCheckedListBox1);
-            Name = "FormTest";
-            Text = "FormTest";
+            Margin=new Padding(3, 2, 3, 2);
+            Name="FormTest";
+            Text="FormTest";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -128,5 +137,8 @@
         private Button buttonDelete;
         private Button buttonSelected;
         private Label label1;
+        private Button buttonImage;
+        private Button buttonTable;
+        private Button buttonChart;
     }
 }

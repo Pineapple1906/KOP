@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Text;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Shapes.Charts;
-using MigraDoc.Rendering;
+﻿using System.ComponentModel;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.Windows.Forms.DataVisualization.Charting;
+using Font = iTextSharp.text.Font;
 
 namespace WinFormsLibrary1
 {
@@ -18,69 +13,69 @@ namespace WinFormsLibrary1
             InitializeComponent();
         }
 
-        public DiagramToPDF(IContainer container)
+        public void GenPdf(ChartPdfInfo info)
         {
-            container.Add(this);
-
-            InitializeComponent();
-        }
-        public void CreateDocument(string filepath, string docname,
-            string chartname, Area area, Dictionary<string, double> values)
-        {
-            var document = DefineCharts(docname, chartname, area, values);
-
-            var renderer = new PdfDocumentRenderer(true)
+            // Проверяем входные данные
+            if (string.IsNullOrEmpty(info.FileName) || string.IsNullOrEmpty(info.Title) || string.IsNullOrEmpty(info.ChartTitle) || info.Data == null || info.Data.Count == 0)
             {
-                Document = document
-            };
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            renderer.RenderDocument();
-            renderer.PdfDocument.Save(filepath);
-        }
-        public static Document DefineCharts(string docname, string chartname,
-            Area area, Dictionary<string, double> values)
-        {
-            if (string.IsNullOrEmpty(docname) || string.IsNullOrEmpty(chartname) || values == null)
-            {
-                throw new Exception("Недостаточная заполненность данных");
+                throw new ArgumentException("Недостаточно входных данных");
             }
 
             Document document = new Document();
-            document.AddSection();
-            document.LastSection.AddParagraph(docname, "Heading1").Format.Font.Bold = true;
+            PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(info.FileName, FileMode.Create));
+            document.Open();
 
-            Chart chart = new Chart(ChartType.Pie2D);
-            chart.HeaderArea.AddParagraph(chartname);
+            Paragraph title = new Paragraph(info.Title, new Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD));
+            title.Alignment = Element.ALIGN_CENTER;
+            document.Add(title);
 
-            chart.Width = Unit.FromCentimeter(16);
-            chart.Height = Unit.FromCentimeter(12);
-            Series series = chart.SeriesCollection.AddSeries();
-            series.Add(values.Values.ToArray());
+            Chart chart = new Chart();
+            chart.Width = 500;
+            chart.Height = 300;
 
-            XSeries xseries = chart.XValues.AddXSeries();
-            xseries.Add(values.Keys.ToArray());
+            ChartArea chartArea = new ChartArea();
+            chart.ChartAreas.Add(chartArea);
 
-            switch (area)
+            Series series = new Series();
+            series.ChartType = SeriesChartType.Pie;
+            foreach (var item in info.Data)
             {
-                case Area.BOTTOM:
-                    chart.FooterArea.AddLegend();
+                series.Points.AddXY(item.SeriesName, item.Value);
+            }
+            chart.Series.Add(series);
+
+            chart.Titles.Add(info.ChartTitle);
+
+            switch (info.LegendPosition)
+            {
+                case LegendPosition.Top:
+                    chart.Legends.Add(new Legend("Legend"));
+                    chart.Legends["Legend"].Docking = Docking.Top;
                     break;
-                case Area.TOP:
-                    chart.TopArea.AddLegend();
+                case LegendPosition.Bottom:
+                    chart.Legends.Add(new Legend("Legend"));
+                    chart.Legends["Legend"].Docking = Docking.Bottom;
                     break;
-                case Area.RIGHT:
-                    chart.RightArea.AddLegend();
+                case LegendPosition.Left:
+                    chart.Legends.Add(new Legend("Legend"));
+                    chart.Legends["Legend"].Docking = Docking.Left;
                     break;
-                case Area.LEFT:
-                    chart.LeftArea.AddLegend();
+                case LegendPosition.Right:
+                    chart.Legends.Add(new Legend("Legend"));
+                    chart.Legends["Legend"].Docking = Docking.Right;
                     break;
             }
-            chart.DataLabel.Type = DataLabelType.Percent;
-            chart.DataLabel.Position = DataLabelPosition.OutsideEnd;
 
-            document.LastSection.Add(chart);
+            string chartImageFile = Path.GetTempFileName() + ".png";
+            chart.SaveImage(chartImageFile, ChartImageFormat.Png);
 
-            return document;
+            iTextSharp.text.Image chartImage = iTextSharp.text.Image.GetInstance(chartImageFile);
+            document.Add(chartImage);
+
+            document.Close();
+
+            // Удаление временного файла с изображением
+            File.Delete(chartImageFile);
         }
     }
 }

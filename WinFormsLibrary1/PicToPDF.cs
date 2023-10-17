@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
 
 namespace WinFormsLibrary1
 {
@@ -19,46 +12,41 @@ namespace WinFormsLibrary1
             InitializeComponent();
         }
 
-        public PicToPDF(IContainer container)
+        public void GenPdf(ImagesPdfInfo info)
         {
-            container.Add(this);
-
-            InitializeComponent();
-        }
-
-        public void CreateDocument(string filepath, string doc_name, string[] images)
-        {
-            if (string.IsNullOrEmpty(filepath) || string.IsNullOrEmpty(doc_name) || images.Length == 0)
+            if (info.Images == null || string.IsNullOrEmpty(info.Title) || string.IsNullOrEmpty(info.FileName))
             {
-                throw new ArgumentNullException("Недостаточная заполненость данных");
+                return;
             }
 
-            PdfDocument document = new PdfDocument();
+            var  document = new Document();
 
-            PdfPage page = document.AddPage();
+            var style = document.Styles["Normal"];
+            style.Font.Name = "Times New Roman";
+            style.Font.Size = 14;
+            style = document.Styles.AddStyle("NormalTitle", "Normal");
+            style.Font.Bold = true;
+            style.Font.Color = MigraDoc.DocumentObjectModel.Color.Parse("Black");
+
+            var section = document.AddSection();
+
+            var paragraph = section.AddParagraph(info.Title);
+
+            paragraph.Format.SpaceAfter = "1cm";
+            paragraph.Format.Alignment = ParagraphAlignment.Center;
+            paragraph.Style = "NormalTitle";
+
+            foreach (string item in info.Images)
+                section.AddImage(item);
+
+            var renderer = new PdfDocumentRenderer(true)
+            {
+                Document = document
+            };
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            XFont font = new XFont("Robotic", 18, XFontStyle.BoldItalic);
-
-            XGraphics xgr = XGraphics.FromPdfPage(page);
-            xgr.DrawString(doc_name, font, XBrushes.Black,
-            new XRect(0, 0, page.Width, page.Height),
-                          XStringFormats.TopCenter);
-
-            foreach (string image in images)
-            {
-                DrawImage(xgr, image, 50, 50);
-                page = document.AddPage();
-                xgr = XGraphics.FromPdfPage(page);
-            }
-            document.Pages.RemoveAt(document.PageCount - 1);
-            document.Save(filepath);
+            renderer.RenderDocument();
+            renderer.PdfDocument.Save(info.FileName);
         }
-        private void DrawImage(XGraphics xgr, string jpeg_path, int x, int y)
-        {
-            XImage image = XImage.FromFile(jpeg_path);
-            xgr.DrawImage(image, x, y);
-        }
-
     }
 }
