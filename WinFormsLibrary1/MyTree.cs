@@ -1,4 +1,9 @@
-﻿namespace WinFormsLibrary1
+﻿using System;
+using System.Reflection;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace WinFormsLibrary1
 {
     public partial class MyTree : UserControl
     {
@@ -8,6 +13,7 @@
             treeView1.AfterSelect += (sender, e) => _event?.Invoke(sender, e);
 
         }
+
         private event EventHandler _event;
 
         public event EventHandler SelectedNodeChanged
@@ -21,6 +27,7 @@
                 _event -= value;
             }
         }
+
         public int SelectedIndex
         {
             get
@@ -47,6 +54,7 @@
                 }
             }
         }
+
         private List<string> config;
         public void SetConfig(List<string> config)
         {
@@ -54,76 +62,81 @@
                 throw new NullReferenceException("Add not null config");
             this.config = config;
         }
+
         public void CreateTree<T>(T obj) where T : class, new()
         {
-            if (config == null)
-                throw new NullReferenceException("Add not null config");
             if (obj == null)
-                throw new NullReferenceException("Add not null list of objects");
-
-            var elementType = obj.GetType();
-
-            var currentLevelNodes = treeView1.Nodes;
-            int curlvl = 1;
-            foreach (var nodeName in config)
             {
-                var propertyInfo = elementType.GetProperty(nodeName);
-                if (propertyInfo != null)
+                throw new ArgumentNullException("Object");
+            }
+
+            if (config == null)
+            {
+                throw new Exception("config must be initialized");
+            }
+
+            TreeNodeCollection nodes = treeView1.Nodes;
+            foreach (string item in config)
+            {
+                bool flag = false;
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    var propertyValue = propertyInfo.GetValue(obj).ToString();
-                    if (!currentLevelNodes.ContainsKey(propertyValue))
+                    if (obj.GetType().GetProperty(item)!.GetValue(obj)!.ToString() == nodes[i].Text)
                     {
-                        if (curlvl == config.Count)
-                        {
-                            currentLevelNodes.Add(propertyValue);
-                        }
-                        else
-                            currentLevelNodes.Add(propertyValue, propertyValue);
-                    }
-                    if (curlvl != config.Count)
-                        currentLevelNodes = currentLevelNodes.Find(propertyValue, false)[0].Nodes;
-                }
-                else
-                {
-                    var fieldInfo = elementType.GetField(nodeName);
-                    if (fieldInfo != null)
-                    {
-                        var fieldValue = fieldInfo.GetValue(obj).ToString();
-                        if (!currentLevelNodes.ContainsKey(fieldValue))
-                        {
-                            if (curlvl == config.Count)
-                            {
-                                currentLevelNodes.Add(fieldValue);
-                            }
-                            else
-                                currentLevelNodes.Add(fieldValue, fieldValue);
-                        }
-                        if (curlvl != config.Count)
-                            currentLevelNodes = currentLevelNodes.Find(fieldValue, false)[0].Nodes;
+                        nodes = nodes[i].Nodes;
+                        flag = true;
+                        break;
                     }
                 }
-                curlvl++;
+
+                if (!flag)
+                {
+                    TreeNode treeNode = nodes.Add(obj.GetType().GetProperty(item)!.GetValue(obj)!.ToString());
+                    nodes = treeNode.Nodes;
+                }
             }
         }
+
         public T GetSelectedNode<T>() where T : class, new()
         {
-            if (treeView1.SelectedNode == null)
-                return null;
-            var curNode = treeView1.SelectedNode;
-            if (curNode.Nodes.Count > 0)
-                throw new Exception("Choose last node of tree (leaf)");
-            var item = new T();
-            for (int i = config.Count - 1; i >= 0; i--)
+            TreeNode selNode = treeView1.SelectedNode;
+            if (selNode?.FirstNode != null)
             {
-                var pinfo = item.GetType().GetProperty(config[i]);
-                if (pinfo != null)
-                {
-                    pinfo.SetValue(item, Convert.ChangeType(curNode.Text, pinfo.PropertyType));
-                    curNode = curNode.Parent;
-                }
+                throw new Exception("Not a last level node");
             }
-            return item;
+            if (treeView1.SelectedNode == null)
+            {
+                return null;
+            }
+
+            Stack<string> stack = new Stack<string>();
+            for (TreeNode treeNode = treeView1.SelectedNode; treeNode != null; treeNode = treeNode.Parent)
+            {
+                stack.Push(treeNode.Text);
+            }
+
+            if (stack.Count != config.Count)
+            {
+                return null;
+            }
+
+            T val = new();
+            foreach (string propertyName in config)
+            {
+                PropertyInfo prop = val.GetType().GetProperty(propertyName);
+                string value = stack.Pop();
+
+                var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType);
+
+                if (underlyingType != null)
+                    prop?.SetValue(val, null);
+                else
+                    prop?.SetValue(val, Convert.ChangeType(value, prop?.PropertyType));
+            }
+
+            return val;
         }
+
         public void Clear()
         {
             treeView1.Nodes.Clear();
